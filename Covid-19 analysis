@@ -1,0 +1,51 @@
+##COVID-19 ANALYSIS
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+## datasets
+full_grouped_df = pd.read_csv('full_grouped.csv')
+covid_clean_complete_df = pd.read_csv('covid_19_clean_complete.csv')
+country_wise_latest_df = pd.read_csv('country_wise_latest.csv')
+day_wise_df = pd.read_csv('day_wise.csv')
+usa_county_wise_df = pd.read_csv('usa_county_wise.csv')
+worldometer_data_df = pd.read_csv('worldometer_data.csv')
+
+## 1: To Plot total cases over time
+plt.figure(figsize=(12, 6))
+plt.plot(day_wise_df['Date'], day_wise_df['Confirmed'], label='Confirmed')
+plt.plot(day_wise_df['Date'], day_wise_df['Deaths'], label='Deaths')
+plt.plot(day_wise_df['Date'], day_wise_df['Recovered'], label='Recovered')
+plt.xlabel('Date')
+plt.ylabel('Total Cases')
+plt.title('COVID-19 Total Cases Over Time')
+plt.legend()
+plt.xticks(rotation=45)
+plt.show()
+
+## 2: To Visualize country-wise cases
+top_countries_df = country_wise_latest_df.sort_values('Confirmed', ascending=False).head(10)
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Confirmed', y='Country/Region', data=top_countries_df)
+plt.xlabel('Total Confirmed Cases')
+plt.ylabel('Country')
+plt.title('Top 10 Countries with Highest Confirmed Cases')
+plt.show()
+
+## 3: To Analyze USA county-wise cases
+top_counties_df = usa_county_wise_df.sort_values('Confirmed', ascending=False).head(10)
+plt.figure(figsize=(12, 6))
+sns.barplot(x='Confirmed', y='Province_State', data=top_counties_df)
+plt.xlabel('Total Confirmed Cases')
+plt.ylabel('County')
+plt.title('Top 10 Counties in USA with Highest Confirmed Cases')
+plt.show()
+
+## 4: To Analyze worldometer data
+plt.figure(figsize=(10, 8))
+sns.scatterplot(x='TotalCases', y='TotalDeaths', hue='Country/Region', data=worldometer_data_df)
+plt.xlabel('Total Cases')
+plt.ylabel('Total Deaths')
+plt.title('Total Cases vs Total Deaths (Worldometer Data)')
+plt.show()
