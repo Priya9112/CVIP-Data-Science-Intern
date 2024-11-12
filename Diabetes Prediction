@@ -8,37 +8,43 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 
-# 1: first we need to load the dataset
+# load the dataset
 data = pd.read_csv("diabetes_prediction_dataset.csv")
 
-# 2: To perform Exploratory Data Analysis --> (EDA)
+# perform Exploratory Data Analysis (EDA)
 print(data.head())
 print(data.isnull().sum())
 print(data.describe())
 sns.pairplot(data, hue='diabetes')
 plt.show()
 
-# 3: To preprocess the data
+# preprocess the data
 data.dropna(inplace=True)
-data = pd.get_dummies(data, columns=['gender'], drop_first=True)
+categorical_columns = data.select_dtypes(include=['object']).columns
+print("Categorical columns:", categorical_columns)
+data = pd.get_dummies(data, columns=categorical_columns, drop_first=True)
 X = data.drop('diabetes', axis=1)
 y = data['diabetes']
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
+
+# Split data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-## 4: To train the model
+# train the model
 model = LogisticRegression()
 model.fit(X_train, y_train)
 
-## 5: To evaluate the model
+# evaluate the model
 y_pred = model.predict(X_test)
-
 print(classification_report(y_test, y_pred))
 print(confusion_matrix(y_test, y_pred))
 
-## 6: To make predictions for a new patient's data
-new_data = np.array([[45, 1, 26.5, 0, 1, 6.7, 150]])
+print("Shape of X after encoding:", X.shape)
+
+# predictions for a new patient's data
+new_data = np.array([[45, 1, 26.5, 0, 1, 6.7, 150, 0, 0, 1, 0, 0, 1]])  
 new_data_scaled = scaler.transform(new_data)
+
 prediction = model.predict(new_data_scaled)
-print(prediction)
+print("Prediction:", prediction)
